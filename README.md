@@ -1,102 +1,152 @@
 Markdown
 
-# Projeto PathFinder: Resolvendo o Labirinto 2D com o Algoritmo A*
+# PathFinder - Resolvendo o Labirinto 2D com o Algoritmo A*
 
 ## Descrição do Projeto
 
-O projeto **PathFinder** implementa o algoritmo de busca A* em Python para encontrar o menor caminho entre um ponto de início ('S') e um ponto de fim ('E') em um labirinto bidimensional. O labirinto pode conter obstáculos ('1') que impedem a passagem. O algoritmo A* combina o custo do caminho já percorrido com uma função heurística para estimar o custo restante até o objetivo, buscando a solução de forma eficiente.
+O projeto **PathFinder** implementa o algoritmo A* (A-estrela) em Python para encontrar o caminho mais curto entre um ponto inicial ('S') e um ponto final ('E') em um labirinto 2D. Este projeto foi desenvolvido para simular um robô de resgate que precisa navegar por um ambiente com obstáculos, calculando a rota mais eficiente. O labirinto pode ser gerado automaticamente com dimensões e densidade de obstáculos especificadas pelo usuário.
 
-## Sobre o Problema: Encontrando o Caminho em um Labirinto 2D
+---
 
-Encontrar um caminho eficiente em um labirinto é um problema clássico em ciência da computação e inteligência artificial. Em um cenário como o de um robô de resgate, encontrar o menor caminho para um objetivo, evitando obstáculos, é crucial para otimizar o tempo e os recursos. O algoritmo A* se destaca por sua capacidade de encontrar a solução ótima (o caminho de menor custo) ao considerar tanto o custo já incorrido quanto uma estimativa inteligente do custo restante.
+## Sobre o Algoritmo A*
+
+O algoritmo A* é um algoritmo de busca de caminho amplamente utilizado que encontra o caminho de menor custo entre um nó inicial e um nó final em um grafo. Ele é conhecido por sua eficiência e otimalidade. O A* combina as vantagens do Algoritmo de Dijkstra (que prioriza caminhos já explorados) e da Busca Gulosa Best-First (que usa uma heurística para estimar o custo até o destino).
+
+A principal característica do A* é o uso da função de avaliação $f(n)$, calculada para cada nó $n$:
+
+$f(n) = g(n) + h(n)$
+
+Onde:
+-   $g(n)$: É o custo real do caminho desde o nó inicial até o nó $n$. No contexto deste projeto, cada movimento horizontal ou vertical tem custo 1, e movimentos diagonais têm custo $\sqrt{2}$. Células com terreno especial ('2') têm um custo base maior (5).
+-   $h(n)$: É a função heurística que estima o custo do caminho mais barato do nó $n$ até o nó destino. Uma heurística admissível (que nunca superestima o custo real) é crucial para garantir que o A* encontre o caminho mais curto.
+
+### Heurística de Manhattan
+
+Neste projeto, a heurística utilizada é a **Distância de Manhattan**:
+$h((x_1, y_1), (x_2, y_2)) = |x_1 - x_2| + |y_1 - y_2|$
+
+Esta heurística calcula a soma das diferenças absolutas das coordenadas $x$ e $y$ entre o nó atual e o nó destino. Ela é apropriada para grades onde o movimento é restrito a direções horizontais e verticais, mas também funciona bem como uma estimativa quando movimentos diagonais são permitidos, pois continua sendo admissível.
+
+O algoritmo A* mantém uma fila de prioridade (min-heap) dos nós a serem visitados, priorizando aqueles com o menor valor $f(n)$. Ele explora o nó com menor $f(n)$, atualiza os custos dos vizinhos e os adiciona à fila. O processo continua até que o nó destino seja alcançado ou a fila de prioridade esteja vazia (indicando que não há caminho).
+
+---
+
+## Funcionalidades Implementadas
+
+-   **Geração Automática de Labirintos:** O usuário pode definir o número de linhas, colunas e a probabilidade de obstáculos para gerar labirintos aleatórios.
+-   **Movimento em 8 Direções:** O algoritmo A* implementado permite movimentos nas quatro direções cardeais (cima, baixo, esquerda, direita) e, opcionalmente, nas quatro direções diagonais.
+    -   Custo de movimento horizontal/vertical: 1 (para células normais).
+    -   Custo de movimento diagonal: $\sqrt{2}$ (para células normais).
+-   **Custos Variados por Célula:** O labirinto pode conter células com diferentes custos de travessia (ex: '2' representa terreno difícil com custo base 5).
+-   **Validação:** O programa verifica se há exatamente um ponto de início ('S') e um ponto de fim ('E') no labirinto.
+-   **Exibição Clara do Resultado:** O caminho encontrado é exibido como uma lista de coordenadas e também destacado visualmente no labirinto impresso.
+
+---
 
 ## Como Executar o Projeto
 
 ### 1. Pré-requisitos
 
-Certifique-se de ter o Python instalado em seu sistema. Este projeto utiliza as seguintes bibliotecas padrão do Python:
+-   Python 3.x instalado.
 
-- `heapq`: Para implementar a fila de prioridade necessária no algoritmo A*.
-- `math`: Para funções matemáticas como `math.inf` e `math.sqrt` (utilizada para movimentos diagonais opcionais).
-- `random`: Para a geração aleatória de labirintos.
+### 2. Ambiente Virtual (Opcional, mas recomendado)
 
-Não são necessárias instalações adicionais de bibliotecas.
-
-### 2. Executar o Script
-
-Para executar o algoritmo, salve o código fornecido em um arquivo Python (por exemplo, `pathfinder.py`) e execute-o a partir do seu terminal:
+Para evitar conflitos de dependência com outros projetos Python, é uma boa prática criar e ativar um ambiente virtual:
 
 ```bash
-python pathfinder.py
-O programa solicitará as seguintes informações:
+# Crie um ambiente virtual (por exemplo, chamado .venv)
+python3 -m venv .venv
 
-Número de linhas do labirinto.
-Número de colunas do labirinto.
-Probabilidade de haver um obstáculo (um valor entre 0 e 1 para a geração aleatória do labirinto).
-Após fornecer essas informações, o programa gerará um labirinto aleatório, mostrará o labirinto, tentará encontrar o caminho usando o algoritmo A* (permitindo movimentos diagonais), e exibirá o caminho encontrado (em coordenadas) e o labirinto com o caminho destacado.
+# Ative o ambiente virtual
+# Em Linux/macOS:
+source .venv/bin/activate
+# Em Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# Em Windows (CMD):
+.venv\Scripts\activate.bat
+3. Executar o Script
+Supondo que o código esteja em um arquivo chamado pathfinder_a_star.py (ou o nome que você deu ao arquivo principal contendo a função main):
 
-3. Exemplo de Entrada e Saída
-Entrada (via terminal):
+Bash
 
+python pathfinder_a_star.py
+O programa solicitará que o usuário insira:
+
+O número de linhas do labirinto.
+O número de colunas do labirinto.
+A probabilidade de haver um obstáculo em cada célula (um valor entre 0 e 1, por exemplo, 0.3 para 30% de chance).
+Após a entrada, o labirinto gerado será exibido, seguido pelo caminho encontrado (se existir) e o labirinto com o caminho destacado.
+
+Explicação do Código (Principais Funções)
+gerar_labirinto(linhas, colunas, probabilidade_obstaculo):
+Cria uma matriz 2D representando o labirinto. Preenche aleatoriamente as células com obstáculos ('1') com base na probabilidade fornecida e posiciona os pontos de início ('S') e fim ('E') em locais válidos e distintos.
+
+encontrar_pontos(labirinto):
+Varre o labirinto para localizar as coordenadas dos pontos 'S' (início) e 'E' (fim). Valida se existe exatamente um de cada, lançando um erro caso contrário.
+
+heuristica(a, b):
+Calcula a distância de Manhattan entre dois pontos a e b (tuplas de coordenadas).
+
+custo_celula(valor):
+Retorna o custo para atravessar uma célula com base no seu valor.
+
+'0', 'S', 'E': custo 1 (caminho livre).
+'2': custo 5 (terreno mais difícil).
+'1' (ou outros): math.inf (obstáculo).
+a_star(labirinto, inicio, fim, permitir_diagonais=False):
+É o coração do projeto, implementando o algoritmo A*.
+
+Inicializa uma fila de prioridade (heapq) com o nó inicial (custo 0).
+Mantém dicionários para veio_de (para reconstruir o caminho) e custo_ate (o custo $g(n)$ para cada nó alcançado).
+Em cada iteração, remove o nó com a menor prioridade ($f(n) = g(n) + h(n)$) da fila.
+Se o nó atual for o destino, reconstrói e retorna o caminho.
+Caso contrário, explora os vizinhos válidos (dentro dos limites, não obstáculos).
+Para cada vizinho, calcula o novo custo ($g(n)$) para alcançá-lo.
+Se um caminho mais curto para o vizinho for encontrado, atualiza seu custo_ate, veio_de, e o adiciona (ou atualiza sua prioridade) na fila de prioridade.
+Se a fila ficar vazia e o destino não for alcançado, retorna None (sem solução).
+Considera movimentos diagonais e custos de terreno diferenciados se permitir_diagonais for True e se a célula tiver um custo específico.
+imprimir_labirinto_com_caminho(labirinto, caminho):
+Cria uma cópia do labirinto e marca as células do caminho encontrado com '*' (exceto o início e o fim) para visualização.
+
+main():
+Função principal que gerencia a interação com o usuário, chama a geração do labirinto, a execução do A* e a exibição dos resultados. Inclui tratamento de erros para entradas inválidas ou situações onde o labirinto não tem solução.
+
+Exemplo de Entrada e Saída
+Interação com o Usuário:
 Digite o número de linhas do labirinto: 5
-Digite o número de colunas do labirinto: 7
+Digite o número de colunas do labirinto: 5
 Digite a probabilidade de haver um obstáculo (entre 0 e 1): 0.2
-Saída (exemplo - o labirinto e o caminho podem variar devido à geração aleatória):
+Labirinto Gerado (Exemplo):
+(A saída exata variará devido à aleatoriedade)
 
 Labirinto gerado:
-S 0 0 1 0 0 0
-0 1 0 0 1 0 0
-0 0 0 1 0 1 0
-1 0 1 0 0 0 E
-0 0 0 1 0 0 0
-
+S 0 0 0 1
+0 1 0 1 0
+0 0 0 0 0
+1 0 1 E 0
+0 0 0 0 1
+Caminho Encontrado:
 Caminho encontrado (coordenadas):
-[(0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (3, 2), (3, 3), (3, 4), (3, 5), (4, 5), (4, 6)]
-
+[(0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (2, 3), (3, 3)]
+Labirinto com Caminho Destacado:
 Labirinto com caminho:
-S * * 1 0 0 0
-0 1 * 0 1 0 0
-0 0 * 1 0 * 0
-1 0 1 0 0 * E
-0 0 0 1 0 * 0
-Neste exemplo, '*' indica as células que fazem parte do menor caminho encontrado.
+S 0 0 0 1
+* 1 0 1 0
+* * * * 0
+1 0 1 E 0
+0 0 0 0 1
+Exemplo sem Solução:
+Se um labirinto for gerado onde 'E' é inacessível a partir de 'S':
 
-Explicação do Algoritmo A* Implementado
-O algoritmo A* implementado neste projeto funciona da seguinte maneira:
+Labirinto gerado:
+S 1 E
+0 1 0
+0 0 0
 
-Representação do Labirinto: O labirinto é representado como uma lista de listas (uma matriz 2D) onde cada elemento indica o tipo da célula ('0' para livre, '1' para obstáculo, 'S' para início, 'E' para fim).
-
-Encontrar Pontos de Início e Fim (encontrar_pontos): Esta função itera pelo labirinto para encontrar as coordenadas exatas do ponto de início ('S') e do ponto de fim ('E'). Ela também valida se existe exatamente um de cada.
-
-Função Heurística (heuristica): A função heurística utilizada é a distância de Manhattan entre dois pontos. Para dois pontos $(a_x, a_y)$ e $(b_x, b_y)$, a distância de Manhattan é calculada como:
-$$h(a, b) = |a_x - b_x| + |a_y - b_y|$$
-Esta heurística estima o número mínimo de movimentos (horizontais ou verticais) necessários para alcançar o objetivo a partir da célula atual.
-
-Custo da Célula (custo_celula): Esta função define o custo para se mover para uma determinada célula. Na implementação atual:
-
-Células livres ('0', 'S', 'E') têm um custo de 1.
-Células com valor '2' (um exemplo de terreno mais difícil) têm um custo de 5.
-Obstáculos ('1' ou qualquer outro valor não reconhecido) têm um custo infinito (math.inf), o que efetivamente impede o algoritmo de passar por eles.
-Algoritmo A (a_star):*
-
-Conjunto Aberto (Fila de Prioridade): Utiliza um heap de prioridade (heapq) para armazenar os nós a serem explorados. A prioridade de cada nó é dada por $f(n) = g(n) + h(n)$, onde:
-$g(n)$ é o custo do caminho percorrido até o nó $n$.
-$h(n)$ é a estimativa heurística do custo do nó $n$ até o objetivo.
-Conjunto Fechado (Implícito): O conjunto de nós já avaliados é implicitamente mantido através do dicionário custo_ate.
-Rastreamento do Caminho (veio_de): Um dicionário veio_de armazena o nó predecessor de cada nó no caminho mais curto encontrado até o momento. Isso permite reconstruir o caminho final.
-Exploração de Vizinhos: Em cada iteração, o nó com a menor prioridade é removido do heap. Se este nó for o objetivo, o caminho é reconstruído. Caso contrário, seus vizinhos válidos (dentro dos limites do labirinto e não sendo obstáculos) são explorados.
-Cálculo de Custos: Para cada vizinho, um novo custo é calculado ($novo_custo = custo_ate[atual] + custo_terreno$). Se este novo custo for menor do que o custo já conhecido para chegar ao vizinho, o custo é atualizado, o predecessor do vizinho é registrado, e o vizinho é adicionado ao heap com sua nova prioridade ($prioridade = novo_custo + heuristica(vizinho, fim)$).
-Movimentos Diagonais (Opcional): A implementação permite movimentos diagonais se o parâmetro permitir_diagonais for True. O custo de um movimento diagonal é $\sqrt{2}$.
-Sem Solução: Se o heap se esvaziar antes de o objetivo ser alcançado, significa que não há um caminho possível, e a função retorna None.
-Impressão do Labirinto com Caminho (imprimir_labirinto_com_caminho): Esta função recebe o labirinto original e o caminho encontrado e cria uma cópia do labirinto onde as células pertencentes ao caminho (excluindo o início e o fim) são marcadas com '*'. Isso facilita a visualização do caminho no labirinto.
-
-Função Principal (main): A função principal coordena todo o processo:
-
-Solicita ao usuário as dimensões do labirinto e a probabilidade de obstáculos.
-Gera o labirinto aleatoriamente.
-Encontra os pontos de início e fim.
-Chama o algoritmo A* para encontrar o caminho.
-Imprime o labirinto gerado, o caminho encontrado (em coordenadas) e o labirinto com o caminho destacado.
-Lida com possíveis erros, como a não existência de um ponto de início ou fim único.
+Sem solução possível para este labirinto.
+Requisitos de Implementação Atendidos
+Entrada de matriz 2D: O labirinto é gerado automaticamente com base nas dimensões fornecidas pelo usuário.
+Validação de S e E: A função encontrar_pontos garante que o labirinto contenha exatamente um ponto 'S' e um 'E' antes de executar o algoritmo.
+Retorno "Sem solução": Se o algoritmo A* não encontrar um caminho entre 'S' e 'E', o programa informa "Sem solução possível para este labirinto."
 Conclusão
-Este projeto demonstra uma implementação eficaz do algoritmo de busca A* para resolver o problema de encontrar o menor caminho em um labirinto 2D. Ao combinar o custo real do caminho com uma heurística informada, o algoritmo A* explora o espaço de busca de forma inteligente, encontrando a solução ótima de maneira eficiente. A flexibilidade da função de custo da célula permite a extensão para cenários com diferentes tipos de terreno e custos de movimento.
+O projeto PathFinder demonstra com sucesso a implementação do algoritmo A* para resolver o problema de busca de caminho em labirintos 2D. Ele incorpora funcionalidades como geração de labirintos, consideração de custos de movimento variáveis (incluindo diagonais e tipos de terreno), e uma clara apresentação dos resultados. O código é estruturado para ser compreensível e extensível, fornecendo uma base sólida para futuras melhorias ou aplicações em contextos mais complexos de navegação autônoma.

@@ -1,5 +1,3 @@
-Markdown
-
 # PathFinder - Resolvendo o Labirinto 2D com o Algoritmo A*
 
 ## Descrição do Projeto
@@ -141,3 +139,5 @@ S 0 1 0 0
 ## Conclusão
 
 Este projeto demonstra a aplicação prática do algoritmo A* para resolver o problema clássico de busca de caminho em labirintos 2D. A implementação considera custos variáveis de terreno e a possibilidade de movimentos diagonais, tornando a solução mais flexível e alinhada com cenários do mundo real onde o "custo" de deslocamento pode variar. A geração automática de labirintos facilita os testes em diferentes configurações.
+
+Autor: Gabriel Afonso Infante Vieira

@@ -1,110 +1,265 @@
-# 📌 PathFinder: Resolução de Labirintos 2D com A*
+# Projeto PathFinder: Resolvendo o Labirinto 2D com o Algoritmo A*
 
-## 🔍 Descrição
-O projeto PathFinder é uma implementação em Python do algoritmo A* (A-Star) para encontrar o menor caminho entre dois pontos em um labirinto 2D, evitando obstáculos e considerando diferentes custos de terreno. Desenvolvido para aplicações em robótica, desenvolvimento de jogos e sistemas de navegação inteligente. O projeto gera labirintos proceduralmente com controle sobre o tamanho e a densidade de obstáculos.
+## Descrição do Projeto
 
-## 🧠 Sobre o Algoritmo A*
+O projeto **PathFinder** implementa o algoritmo de busca A* em Python para encontrar o menor caminho entre um ponto de início ('S') e um ponto de fim ('E') em um labirinto bidimensional. O labirinto pode conter obstáculos ('1') que impedem a movimentação. O algoritmo A* combina o custo do caminho já percorrido com uma função heurística (distância de Manhattan) para estimar o custo restante até o objetivo, permitindo uma busca eficiente pela solução ótima.
 
-### Princípios Fundamentais
-O A* combina de forma inteligente:
-- **Custo real (G):** Distância percorrida desde o início
-- **Heurística (H):** Estimativa até o destino usando distância de Manhattan
-- **Fórmula otimizada:** $\(F(n) = G(n) + H(n)\)$
+Este projeto também oferece funcionalidades adicionais como a geração aleatória de labirintos com diferentes níveis de dificuldade e a possibilidade de considerar movimentos diagonais com um custo diferenciado.
 
-### Heurística Implementada
-O projeto utiliza a distância de Manhattan como heurística para estimar o custo restante até o destino:
+---
+
+## Sobre o Problema do Labirinto 2D e o Algoritmo A*
+
+Encontrar o caminho mais curto em um labirinto é um problema clássico em ciência da computação e inteligência artificial. O algoritmo A* é uma técnica de busca informada que se destaca por sua eficiência em encontrar soluções ótimas em grafos e espaços de busca.
+
+**Como o Algoritmo A* Funciona:**
+
+O A* utiliza uma função de avaliação $f(n)$ para cada nó (célula no labirinto), que é definida como a soma de duas componentes:
+
+- $g(n)$: O custo do caminho percorrido do nó inicial até o nó atual $n$.
+- $h(n)$: Uma estimativa heurística do custo do caminho mais curto do nó atual $n$ até o nó objetivo.
+
+A fórmula é:
+$$f(n) = g(n) + h(n)$$
+
+O algoritmo mantém uma lista de nós a serem explorados (geralmente implementada como uma fila de prioridade, utilizando um heap) e sempre expande o nó com o menor valor de $f(n)$. Isso garante que o algoritmo explore primeiro os caminhos mais promissores.
+
+**Heurística da Distância de Manhattan:**
+
+Neste projeto, utilizamos a distância de Manhattan como função heurística. Para dois pontos $(x_1, y_1)$ e $(x_2, y_2)$, a distância de Manhattan é calculada como:
+
+$$h(n) = |x_1 - x_2| + |y_1 - y_2|$$
+
+Essa heurística é admissível (nunca superestima o custo real) em labirintos com movimentos apenas horizontais e verticais, garantindo que o A* encontre o caminho mais curto.
+
+---
+
+## Como Executar o Projeto
+
+1.  **Certifique-se de ter o Python instalado em seu sistema.**
+
+2.  **Salve o código fornecido em um arquivo Python (por exemplo, `pathfinder.py`).**
+
+3.  **Abra um terminal ou prompt de comando e navegue até o diretório onde você salvou o arquivo.**
+
+4.  **Execute o script com o comando:**
+
+    ```bash
+    python pathfinder.py
+    ```
+
+5.  **O programa solicitará que você insira o número de linhas e colunas desejadas para o labirinto, bem como a probabilidade de geração de obstáculos (um valor entre 0 e 1).**
+
+6.  **Após a geração (ou se você optar por modificar o código para usar um labirinto predefinido), o programa tentará encontrar o caminho mais curto entre 'S' e 'E' usando o algoritmo A*.**
+
+7.  **O resultado será exibido no console, mostrando:**
+    -   O labirinto gerado (ou o labirinto de entrada).
+    -   O caminho encontrado como uma lista de coordenadas (se existir).
+    -   O labirinto com o caminho destacado por '*'.
+    -   Uma mensagem indicando se uma solução foi encontrada ou não.
+
+---
+
+## Explicação do Código (Linha a Linha)
+
+Arquivo: **pathfinder.py**
 
 ```python
+import heapq
+import math
+import random
+
+# -------------------------- Funções Utilitárias --------------------------
+
+def encontrar_pontos(labirinto):
+    """
+    Encontra as coordenadas do ponto de início ('S') e fim ('E') no labirinto.
+    Valida se há exatamente um 'S' e um 'E'.
+    """
+    inicio = fim = None
+    for i, linha in enumerate(labirinto):
+        for j, valor in enumerate(linha):
+            if valor == 'S':
+                if inicio is not None:
+                    raise ValueError("Erro: múltiplos pontos de início encontrados.")
+                inicio = (i, j)
+            elif valor == 'E':
+                if fim is not None:
+                    raise ValueError("Erro: múltiplos pontos de fim encontrados.")
+                fim = (i, j)
+    if inicio is None or fim is None:
+        raise ValueError("Erro: o labirinto deve conter exatamente um 'S' e um 'E'.")
+    return inicio, fim
+
+# Esta função itera sobre o labirinto para encontrar as coordenadas dos pontos 'S' e 'E'.
+# Ela também realiza uma validação para garantir que exista exatamente um de cada.
+
 def heuristica(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Distância de Manhattan
-Sistema de Movimento
-O projeto suporta movimentos padrão (↑, ↓, ←, →) com custo 1 e movimentos diagonais (↖, ↗, ↙, ↘) com custo √2, se a opção de diagonais estiver habilitada.
+    """
+    Distância de Manhattan entre dois pontos (a, b).
+    """
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-⚙️ Configuração e Execução
-Pré-requisitos
-Python 3.x
-Instalação e Uso
-Executar o Script
-O código está no arquivo pathfinder.py. Para executá-lo:
+# Implementa a função heurística da distância de Manhattan, calculando a soma das diferenças absolutas
+# das coordenadas x e y entre dois pontos.
 
-Bash
+def custo_celula(valor):
+    """
+    Define o custo para andar sobre determinada célula.
+    Pode ser expandido para terrenos com diferentes pesos.
+    """
+    if valor in ('0', 'S', 'E'):
+        return 1    # Caminho livre ou início/fim
+    elif valor == '2':
+        return 5    # Terreno mais difícil (exemplo)
+    else:
+        return math.inf    # Obstáculo
 
-python pathfinder.py
-O programa solicitará o número de linhas e colunas do labirinto, bem como a probabilidade de haver um obstáculo. Em seguida, o programa irá gerar o labirinto, encontrar o menor caminho utilizando o algoritmo A* e exibir o caminho encontrado, juntamente com uma representação visual do labirinto.
+# Define o custo para mover-se através de diferentes tipos de células no labirinto.
+# Células '0', 'S' e 'E' têm custo 1 (movimento padrão).
+# Células '2' têm um custo maior (exemplo de terreno mais difícil - funcionalidade opcional).
+# Células com outros valores (como '1' representando obstáculos) têm custo infinito, tornando-as inacessíveis.
 
-🧠 Funcionalidades Principais
-Recurso	Descrição	Status
-Algoritmo A* Completo	Implementação otimizada com heapq	✅
-Geração de Labirintos	Customização de tamanho e densidade de obstáculos. O labirinto é gerado com células representando caminhos livres ('0'), obstáculos ('1'), início ('S') e fim ('E').	✅
-Movimentos Diagonais	Ativação via parâmetro no algoritmo A*	✅
-Sistema de Custos	Custos diferenciados para células: 1 para caminhos livres, início e fim; infinito para obstáculos; e 5 para um tipo de terreno mais difícil ('2').	✅
-Validação Rigorosa	Verificação de existência e unicidade de pontos 'S' e 'E'.	✅
-Visualização	Destaque do caminho encontrado no terminal, marcando as células do caminho com '*'.	✅
+def gerar_labirinto(linhas, colunas, probabilidade_obstaculo=0.3):
+    """
+    Gera um labirinto 2D aleatório.
+    """
+    labirinto = [['0' for _ in range(colunas)] for _ in range(linhas)]
 
-Exportar para as Planilhas
-🧪 Exemplo de Uso
-Entrada Interativa
-O programa solicitará:
+    # Coloca obstáculos aleatoriamente
+    for i in range(linhas):
+        for j in range(colunas):
+            if random.random() < probabilidade_obstaculo:
+                labirinto[i][j] = '1'
 
-Número de linhas e colunas do labirinto.
-Probabilidade de haver um obstáculo em cada célula (valor entre 0 e 1).
-Exemplo de entrada:
+    # Garante que os pontos de início e fim estejam em locais diferentes e livres
+    while True:
+        inicio_x = random.randrange(linhas)
+        inicio_y = random.randrange(colunas)
+        fim_x = random.randrange(linhas)
+        fim_y = random.randrange(colunas)
+        if (inicio_x, inicio_y) != (fim_x, fim_y) and labirinto[inicio_x][inicio_y] == '0' and labirinto[fim_x][fim_y] == '0':
+            labirinto[inicio_x][inicio_y] = 'S'
+            labirinto[fim_x][fim_y] = 'E'
+            break
+        # Se os pontos coincidirem ou caírem em obstáculos, tenta novamente
 
-Digite o número de linhas do labirinto: 5
-Digite o número de colunas do labirinto: 5
-Digite a probabilidade de haver um obstáculo (entre 0 e 1): 0.3
-Saída
-O programa exibe o labirinto gerado, o caminho encontrado (se existir) e o labirinto com o caminho destacado.
+    return labirinto
 
-Exemplo de saída:
+# Função para gerar um labirinto aleatório de dimensões especificadas.
+# A probabilidade de um obstáculo aparecer em cada célula é controlada por 'probabilidade_obstaculo'.
+# Garante que os pontos de início 'S' e fim 'E' sejam colocados em células livres e distintas.
 
-Labirinto gerado:
-S 0 1 0 0
-0 0 1 0 1
-1 0 1 0 0
-1 0 0 E 1
-0 0 0 0 0
+# -------------------------- Algoritmo A* --------------------------
 
-Caminho encontrado (coordenadas):
-[(0, 0), (1, 0), (1, 1), (2, 1), (3, 1), (3, 2), (3, 3)]
+def a_star(labirinto, inicio, fim, permitir_diagonais=False):
+    """
+    Algoritmo A* para encontrar o menor caminho de 'inicio' até 'fim'.
+    Permite diagonais opcionalmente.
+    """
+    movimentos = [(-1,0), (1,0), (0,-1), (0,1)]
+    if permitir_diagonais:
+        movimentos += [(-1,-1), (-1,1), (1,-1), (1,1)]
 
-Labirinto com caminho:
-S 0 1 0 0
-* * 1 0 1
-1 * 1 0 0
-1 * * E 1
-0 0 0 0 0
-📊 Análise de Complexidade
-Desempenho
-Cenário	Complexidade Temporal	Complexidade Espacial
-Melhor Caso	O(b^d)	O(n)
-Pior Caso	O(n log n)	O(n)
+    heap = []
+    heapq.heappush(heap, (0, inicio))
+    veio_de = {}
+    custo_ate = {inicio: 0}
 
-Exportar para as Planilhas
-b: Fator de ramificação (número médio de vizinhos explorados).
-d: Profundidade da solução.
-n: Número total de nós no labirinto (linhas * colunas).
-Métricas de Código
-Complexidade Ciclomática: 4 (na função a_star)
-Linhas de Código: ~100
-Cobertura de Testes: Não implementada
-🛠️ Estrutura do Projeto
-O projeto é estruturado em um único arquivo, pathfinder.py, contendo as seguintes funções principais:
+    while heap:
+        _, atual = heapq.heappop(heap)
 
-encontrar_pontos(labirinto): Encontra os pontos de início ('S') e fim ('E') no labirinto.
-heuristica(a, b): Calcula a distância de Manhattan entre dois pontos.
-custo_celula(valor): Define o custo de atravessar uma célula do labirinto.
-gerar_labirinto(linhas, colunas, probabilidade_obstaculo): Gera um labirinto 2D aleatório.
-a_star(labirinto, inicio, fim, permitir_diagonais): Implementa o algoritmo A*.
-imprimir_labirinto_com_caminho(labirinto, caminho): Imprime o labirinto com o caminho destacado.
-main(): Função principal que coordena a execução do programa.
-✨ Roadmap e Futuras Melhorias
-Interface Gráfica: Visualização interativa do labirinto e do caminho encontrado.
-Sistema de Terrenos Avançado: Suporte para diferentes tipos de terreno com custos variados definidos pelo usuário.
-Otimizações de Performance: Implementação com NumPy para grandes labirintos.
-Funcionalidades Adicionais:
-Exportação/importação de labirintos (JSON/CSV).
-Modo benchmark para comparação de algoritmos.
-Geração de labirintos com padrões específicos.
-📌 Conclusão
-Esta implementação do algoritmo A* fornece uma solução eficaz para encontrar o menor caminho em um labirinto 2D. O código é modular, bem comentado e segue as práticas recomendadas de programação em Python. Embora a funcionalidade básica esteja completa, o projeto pode ser expandido para incluir recursos adicionais, como uma interface gráfica e suporte para terrenos mais complexos.
+        if atual == fim:
+            # Reconstrói o caminho
+            caminho = []
+            while atual in veio_de:
+                caminho.append(atual)
+                atual = veio_de[atual]
+            caminho.append(inicio)
+            return caminho[::-1]
+
+        for dx, dy in movimentos:
+            x, y = atual[0] + dx, atual[1] + dy
+            if 0 <= x < len(labirinto) and 0 <= y < len(labirinto[0]):
+                valor = labirinto[x][y]
+                custo_terreno = custo_celula(valor)
+                if custo_terreno == math.inf:
+                    continue
+
+                movimento_diagonal = abs(dx) + abs(dy) == 2
+                fator_diagonal = math.sqrt(2) if movimento_diagonal else 1
+                novo_custo = custo_ate[atual] + custo_terreno * fator_diagonal
+
+                vizinho = (x, y)
+                if vizinho not in custo_ate or novo_custo < custo_ate[vizinho]:
+                    custo_ate[vizinho] = novo_custo
+                    prioridade = novo_custo + heuristica(vizinho, fim)
+                    heapq.heappush(heap, (prioridade, vizinho))
+                    veio_de[vizinho] = atual
+
+    return None  # Sem solução
+
+# Implementação do algoritmo A*.
+# 'movimentos' define as direções possíveis (horizontal e vertical, com opção para diagonais).
+# 'heap' é uma fila de prioridade que armazena os nós a serem explorados, ordenados pelo valor de f(n).
+# 'veio_de' mantém o predecessor de cada nó no caminho mais curto encontrado até o momento.
+# 'custo_ate' armazena o custo do caminho do início até cada nó.
+# O loop 'while heap' continua até que o nó de destino seja encontrado ou a fila esteja vazia (sem solução).
+# Para cada nó atual, explora os vizinhos válidos, calcula o novo custo e a prioridade (f(n)),
+# e atualiza a fila de prioridade e os registros de 'veio_de' e 'custo_ate' se um caminho melhor for encontrado.
+# Se o destino for alcançado, reconstrói o caminho a partir do nó final, seguindo os predecessores em 'veio_de'.
+
+# -------------------------- Impressão --------------------------
+
+def imprimir_labirinto_com_caminho(labirinto, caminho):
+    """
+    Mostra o labirinto com o caminho marcado por '*'.
+    """
+    lab_copy = [linha[:] for linha in labirinto]
+    for x, y in caminho[1:-1]:  # Ignora S e E
+        lab_copy[x][y] = '*'
+    for linha in lab_copy:
+        print(' '.join(linha))
+
+# Função para imprimir o labirinto, marcando as células que fazem parte do caminho encontrado com '*'.
+# Ignora o ponto de início 'S' e o ponto de fim 'E' ao marcar o caminho.
+
+# -------------------------- Função Principal --------------------------
+
+def main():
+    try:
+        linhas = int(input("Digite o número de linhas do labirinto: "))
+        colunas = int(input("Digite o número de colunas do labirinto: "))
+        probabilidade = float(input("Digite a probabilidade de haver um obstáculo (entre 0 e 1): "))
+
+        labirinto = gerar_labirinto(linhas, colunas, probabilidade)
+
+        print("\nLabirinto gerado:")
+        for linha in labirinto:
+            print(' '.join(linha))
+
+        inicio, fim = encontrar_pontos(labirinto)
+        caminho = a_star(labirinto, inicio, fim, permitir_diagonais=True)
+
+        if caminho:
+            print("\nCaminho encontrado (coordenadas):")
+            print(caminho)
+            print("\nLabirinto com caminho:")
+            imprimir_labirinto_com_caminho(labirinto, caminho)
+        else:
+            print("\nSem solução possível para este labirinto.")
+    except ValueError as e:
+        print(f"Erro: {e}")
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
+# Função principal que interage com o usuário para obter as dimensões e a probabilidade do labirinto,
+# gera o labirinto, encontra os pontos de início e fim, executa o algoritmo A* e imprime os resultados.
+# Inclui tratamento de exceções para erros de entrada ou outros problemas.
+
+# -------------------------- Execução --------------------------
+
+if __name__ == "__main__":
+    main()
+
+# Bloco que garante que a função 'main()' seja executada apenas quando o script é rodado diretamente.

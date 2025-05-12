@@ -1,139 +1,180 @@
-# Projeto PathFinder
+Projeto PathFinder: Resolução de Labirintos 2D com A*
+📌 Descrição
 
-## 📌 Descrição
+O projeto PathFinder é uma implementação em Python do algoritmo A* (A-Star) para encontrar o menor caminho entre dois pontos em um labirinto 2D, evitando obstáculos e considerando diferentes custos de terreno. Desenvolvido para aplicações em robótica, desenvolvimento de jogos e sistemas de navegação inteligente. O projeto gera labirintos proceduralmente com controle sobre o tamanho e a densidade de obstáculos.
 
-**PathFinder** é um projeto Python que implementa o algoritmo **A\*** (A-Star) para encontrar o menor caminho entre dois pontos em um labirinto 2D, evitando obstáculos e otimizando o custo total do trajeto. O algoritmo é utilizado em áreas como inteligência artificial, jogos e robótica para navegação eficiente.
+🔍 Sobre o Algoritmo A*
 
----
+Princípios Fundamentais
+O A* combina de forma inteligente:
 
-## 🔍 Sobre o Algoritmo A\*
+Custo real (G): Distância percorrida desde o início
 
-O A* é um algoritmo de busca informada que calcula o melhor caminho com base na fórmula:
+Heurística (H): Estimativa até o destino usando distância de Manhattan
 
-```
-F(n) = G(n) + H(n)
-```
+Fórmula otimizada: F(n) = G(n) + H(n)
 
-- **G(n)**: Custo real do início até o nó atual  
-- **H(n)**: Estimativa (heurística) do custo até o destino
-
-### Heurística Utilizada
-
-- **Distância de Manhattan**:  
-  ```
-  h(n) = |x1 - x2| + |y1 - y2|
-  ```
-
-Opcionalmente, é possível ativar **movimentos diagonais**, com custo de √2.
-
----
-
-## ⚙️ Como Executar
-
-### 1. Clonar o Repositório
-
-```bash
-git clone https://github.com/seuusuario/pathfinder.git
-cd pathfinder
-```
-
-### 2. Criar Ambiente Virtual (opcional, mas recomendado)
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-.venv\Scripts\activate     # Windows
-```
-
-### 3. Executar o Script
-
-```bash
-python main.py
-```
-
-O script utiliza um labirinto pré-definido no código, aplica o algoritmo A* e imprime o caminho encontrado no terminal.
-
----
-
-## 🧠 Funcionalidades
-
-- ✅ Algoritmo A* funcional  
-- ✅ Heurística de Manhattan  
-- ✅ Suporte a movimentos diagonais (opcional)  
-- ✅ Marcação visual do caminho encontrado  
-- ✅ Validação de entrada (exatamente 1 'S' e 1 'E')  
-- ✅ Tratamento de erros  
-- ✅ Código modularizado e comentado  
-
----
-
-## 🧪 Exemplo de Execução
-
-### Entrada:
+Heurística Implementada
+O projeto utiliza a distância de Manhattan como heurística para estimar o custo restante até o destino:
 
 ```python
-labirinto = [
-    ['S', '0', '1', '0', '0'],
-    ['0', '0', '1', '0', '1'],
-    ['1', '0', '1', '0', '0'],
-    ['1', '0', '0', 'E', '1']
-]
+def heuristica(a, b):
+return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Distância de Manhattan
 ```
 
-### Saída:
+Sistema de Movimento
+O projeto suporta movimentos padrão (↑, ↓, ←, →) com custo 1 e movimentos diagonais (↖, ↗, ↙, ↘) com custo √2, se a opção de diagonais estiver habilitada.
 
+⚙️ Configuração e Execução
+
+Pré-requisitos
+Python 3.x
+
+Instalação e Uso
+Executar o Script
+
+O código está no arquivo pathfinder.py. Para executá-lo:
+
+```bash
+python pathfinder.py
 ```
-Menor caminho (coordenadas):
-[(0, 0), (1, 0), (1, 1), (2, 1), (3, 1), (3, 2), (3, 3)]
 
-Labirinto com o caminho:
-S 0 1 0 0
-* * 1 0 1
-1 * 1 0 0
-1 * * E 1
-```
+O programa solicitará o número de linhas e colunas do labirinto, bem como a probabilidade de haver um obstáculo. Em seguida, o programa irá gerar o labirinto, encontrar o menor caminho utilizando o algoritmo A* e exibir o caminho encontrado, juntamente com uma representação visual do labirinto.
 
----
+🧠 Funcionalidades Principais
 
-## 📂 Estrutura
+Recurso
 
-- `main.py`: Arquivo principal com toda a lógica
-- `README.md`: Documentação do projeto
-- (opcional) `labirintos/`: Pasta para entrada por arquivos
+Descrição
 
----
+Status
 
-## 🧠 Complexidade
+Algoritmo A* Completo
 
-### Complexidade Assintótica
+Implementação otimizada com heapq
 
-- **Melhor caso:** O(n), onde n = número de células livres
-- **Pior caso:** O(n log n), devido à fila de prioridade (heap)
+✅
 
-### Complexidade Ciclomática
+Geração de Labirintos
 
-- **Cálculo:** `M = E - N + 2P = 10 - 8 + 2(1) = 4`  
-  A função `a_star()` apresenta **4 caminhos independentes**, indicando lógica bem estruturada e controle de fluxo claro.
+Customização de tamanho e densidade de obstáculos. O labirinto é gerado com células representando caminhos livres ('0'), obstáculos ('1'), início ('S') e fim ('E').
 
----
+✅
 
-## ✨ Possíveis Expansões
+Movimentos Diagonais
 
-- Movimentos diagonais com ativação dinâmica ✅
-- Terrenos com pesos variados ⏳
-- Geração automática de labirintos ⏳
-- Interface gráfica com PyGame ou Tkinter ⏳
-- Entrada de labirinto via arquivo `.txt` ⏳
-- Exportação do caminho em JSON ⏳
+Ativação via parâmetro no algoritmo A*
 
----
+✅
 
-## 📌 Conclusão
+Sistema de Custos
 
-O projeto **PathFinder** cumpre seu propósito de forma clara, eficiente e com foco em qualidade de código. É ideal para aprendizado e também serve como base para sistemas mais complexos de navegação e IA.
+Custos diferenciados para células: 1 para caminhos livres, início e fim; infinito para obstáculos; e 5 para um tipo de terreno mais difícil ('2').
 
----
+✅
 
-## 👨‍💻 Autor
+Validação Rigorosa
 
-Gabriel Afonso Infante Vieira — Estudante de Engenharia de Software
+Verificação de existência e unicidade de pontos 'S' e 'E'.
+
+✅
+
+Visualização
+
+Destaque do caminho encontrado no terminal, marcando as células do caminho com '*'.
+
+✅
+
+🧪 Exemplo de Uso
+
+Entrada Interativa
+O programa solicitará:
+
+Número de linhas e colunas do labirinto.
+
+Probabilidade de haver um obstáculo em cada célula (valor entre 0 e 1).
+
+Exemplo de entrada:
+
+``` Digite o número de linhas do labirinto: 5 Digite o número de colunas do labirinto: 5 Digite a probabilidade de haver um obstáculo (entre 0 e 1): 0.3 ```
+
+Saída
+O programa exibe o labirinto gerado, o caminho encontrado (se existir) e o labirinto com o caminho destacado. Exemplo de saída:
+
+``` Labirinto gerado: S 0 1 0 0 0 0 1 0 1 1 0 1 0 0 1 0 0 E 1 0 0 0 0 0
+
+Caminho encontrado (coordenadas): [(0, 0), (1, 0), (1, 1), (2, 1), (3, 1), (3, 2), (3, 3)]
+
+Labirinto com caminho: S 0 1 0 0 * * 1 0 1 1 * 1 0 0 1 * * E 1 0 0 0 0 0 ```
+
+📊 Análise de Complexidade
+
+Desempenho
+Cenário
+
+Complexidade Temporal
+
+Complexidade Espacial
+
+Melhor Caso
+
+O(b^d)
+
+O(n)
+
+Pior Caso
+
+O(n log n)
+
+O(n)
+
+Métricas de Código
+Complexidade Ciclomática: 4 (na função a_star)
+
+Linhas de Código: ~100
+
+Cobertura de Testes: Não implementada
+
+🛠️ Estrutura do Projeto
+
+O projeto é estruturado em um único arquivo, pathfinder.py, contendo as seguintes funções principais:
+
+encontrar_pontos(labirinto): Encontra os pontos de início ('S') e fim ('E') no labirinto.
+
+heuristica(a, b): Calcula a distância de Manhattan entre dois pontos.
+
+custo_celula(valor): Define o custo de atravessar uma célula do labirinto.
+
+gerar_labirinto(linhas, colunas, probabilidade_obstaculo): Gera um labirinto 2D aleatório.
+
+a_star(labirinto, inicio, fim, permitir_diagonais): Implementa o algoritmo A*.
+
+imprimir_labirinto_com_caminho(labirinto, caminho): Imprime o labirinto com o caminho destacado.
+
+main(): Função principal que coordena a execução do programa.
+
+✨ Roadmap e Futuras Melhorias
+
+Interface Gráfica:
+
+Visualização interativa do labirinto e do caminho encontrado.
+
+Sistema de Terrenos Avançado:
+
+Suporte para diferentes tipos de terreno com custos variados definidos pelo usuário.
+
+Otimizações de Performance:
+
+Implementação com NumPy para grandes labirintos.
+
+Funcionalidades Adicionais:
+
+Exportação/importação de labirintos (JSON/CSV).
+
+Modo benchmark para comparação de algoritmos.
+
+Geração de labirintos com padrões específicos.
+
+📌 Conclusão
+
+Esta implementação do algoritmo A* fornece uma solução eficaz para encontrar o menor caminho em um labirinto 2D. O código é modular, bem comentado e segue as práticas recomendadas de programação em Python. Embora a funcionalidade básica esteja completa, o projeto pode ser expandido para incluir recursos adicionais, como uma interface gráfica e suporte para terrenos mais complexos.

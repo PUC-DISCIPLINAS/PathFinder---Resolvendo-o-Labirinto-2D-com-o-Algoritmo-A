@@ -1,3 +1,5 @@
+Markdown
+
 # Projeto PathFinder: Resolvendo o Labirinto 2D com o Algoritmo A*
 
 ## Descrição do Projeto
@@ -263,3 +265,41 @@ if __name__ == "__main__":
     main()
 
 # Bloco que garante que a função 'main()' seja executada apenas quando o script é rodado diretamente.
+Exemplos de Entrada e Saída
+Exemplo de Entrada:
+
+Digite o número de linhas do labirinto: 5
+Digite o número de colunas do labirinto: 5
+Digite a probabilidade de haver um obstáculo (entre 0 e 1): 0.2
+Exemplo de Saída (o labirinto e o caminho podem variar devido à geração aleatória):
+
+Labirinto gerado:
+S 0 0 1 0
+0 1 0 0 0
+0 0 1 0 1
+0 1 0 E 0
+0 0 0 1 0
+
+Caminho encontrado (coordenadas):
+[(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (4, 1), (4, 2), (3, 2), (3, 3)]
+
+Labirinto com caminho:
+S * * 1 0
+0 1 * * 0
+0 0 1 * 1
+0 1 0 E 0
+0 0 0 1 0
+Exemplo de Saída (sem solução):
+
+Se o labirinto gerado não tiver um caminho possível entre 'S' e 'E', a saída será:
+
+Labirinto gerado:
+S 1 0 1 0
+0 1 0 1 0
+0 1 0 1 0
+0 1 0 E 0
+0 1 0 1 0
+
+Sem solução possível para este labirinto.
+Conclusão
+O projeto PathFinder demonstra uma implementação eficaz do algoritmo A* para a resolução do problema de encontrar o menor caminho em um labirinto 2D. Ao combinar o custo real do caminho percorrido com uma estimativa heurística da distância até o objetivo, o algoritmo A* explora o espaço de busca de forma inteligente, encontrando soluções ótimas de maneira eficiente. A flexibilidade de gerar labirintos aleatórios e a inclusão da opção de movimentos diagonais tornam este projeto uma ferramenta útil para entender e aplicar o algoritmo A* em diferentes cenários de busca de caminhos.

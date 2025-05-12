@@ -44,7 +44,7 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 # Windows (CMD):
 .venv\Scripts\activate.bat
-3. Executar o Script
+### 3. Executar o Script
 Supondo que o código principal esteja salvo como seu_arquivo_principal.py (substitua pelo nome real do seu arquivo):
 
 Bash

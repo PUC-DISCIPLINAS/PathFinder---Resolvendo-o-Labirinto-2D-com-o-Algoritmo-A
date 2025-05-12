@@ -1,37 +1,43 @@
 # Projeto PathFinder
 
-## Descrição do Projeto
+## 📌 Descrição
 
-O projeto **PathFinder** implementa o algoritmo A* (A-Star) em Python para encontrar o menor caminho entre dois pontos em um labirinto 2D. Esse algoritmo é amplamente utilizado em áreas como robótica e jogos para navegação eficiente, considerando obstáculos e otimizando o custo total do trajeto.
+**PathFinder** é um projeto Python que implementa o algoritmo **A\*** (A-Star) para encontrar o menor caminho entre dois pontos em um labirinto 2D, evitando obstáculos e otimizando o custo total do trajeto. O algoritmo é utilizado em áreas como inteligência artificial, jogos e robótica para navegação eficiente.
 
 ---
 
-## Sobre o Algoritmo A\*
+## 🔍 Sobre o Algoritmo A\*
 
-O algoritmo A* é uma técnica de busca informada que combina:
+O A* é um algoritmo de busca informada que calcula o melhor caminho com base na fórmula:
 
-- **G(n):** Custo do caminho percorrido até o nó atual
-- **H(n):** Heurística que estima o custo restante até o destino (neste caso, distância de Manhattan)
-
-A fórmula geral usada é:
 ```
 F(n) = G(n) + H(n)
 ```
 
-A distância de Manhattan é usada como heurística:
-```
-h(n) = |x_atual - x_final| + |y_atual - y_final|
-```
+- **G(n)**: Custo real do início até o nó atual  
+- **H(n)**: Estimativa (heurística) do custo até o destino
 
-Essa abordagem garante que o caminho mais curto e eficiente seja encontrado, se houver, mesmo em cenários com obstáculos complexos.
+### Heurística Utilizada
+
+- **Distância de Manhattan**:  
+  ```
+  h(n) = |x1 - x2| + |y1 - y2|
+  ```
+
+Opcionalmente, é possível ativar **movimentos diagonais**, com custo de √2.
 
 ---
 
-## Como Executar o Projeto
+## ⚙️ Como Executar
 
-### 1. Ambiente Virtual (Opcional, mas recomendado)
+### 1. Clonar o Repositório
 
-Crie e ative um ambiente virtual para manter o ambiente isolado:
+```bash
+git clone https://github.com/seuusuario/pathfinder.git
+cd pathfinder
+```
+
+### 2. Criar Ambiente Virtual (opcional, mas recomendado)
 
 ```bash
 python3 -m venv .venv
@@ -39,101 +45,31 @@ source .venv/bin/activate  # Linux/macOS
 .venv\Scripts\activate     # Windows
 ```
 
-### 2. Executar o Script
-
-O código está no arquivo `main.py`. Para executá-lo:
+### 3. Executar o Script
 
 ```bash
 python main.py
 ```
 
-O programa carregará um labirinto 2D definido no próprio script, executará o algoritmo A* e imprimirá o caminho encontrado com destaque no terminal.
+O script utiliza um labirinto pré-definido no código, aplica o algoritmo A* e imprime o caminho encontrado no terminal.
 
 ---
 
-## Explicação do Código (Linha a Linha)
+## 🧠 Funcionalidades
 
-Arquivo: **main.py**
-
-```python
-import heapq
-
-def encontrar_pontos(labirinto):
-    for i, linha in enumerate(labirinto):
-        for j, valor in enumerate(linha):
-            if valor == 'S':
-                start = (i, j)
-            elif valor == 'E':
-                end = (i, j)
-    return start, end
-
-def heuristica(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
-
-def a_star(labirinto, inicio, fim):
-    heap = []
-    heapq.heappush(heap, (0, inicio))
-    veio_de = {}
-    custo_ate_aqui = {inicio: 0}
-
-    while heap:
-        _, atual = heapq.heappop(heap)
-        if atual == fim:
-            caminho = []
-            while atual != inicio:
-                caminho.append(atual)
-                atual = veio_de[atual]
-            caminho.append(inicio)
-            caminho.reverse()
-            return caminho
-
-        for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
-            vizinho = (atual[0] + dx, atual[1] + dy)
-            x, y = vizinho
-            if 0 <= x < len(labirinto) and 0 <= y < len(labirinto[0]):
-                if labirinto[x][y] != '1':
-                    novo_custo = custo_ate_aqui[atual] + 1
-                    if vizinho not in custo_ate_aqui or novo_custo < custo_ate_aqui[vizinho]:
-                        custo_ate_aqui[vizinho] = novo_custo
-                        prioridade = novo_custo + heuristica(vizinho, fim)
-                        heapq.heappush(heap, (prioridade, vizinho))
-                        veio_de[vizinho] = atual
-    return None
-
-def imprimir_labirinto_com_caminho(labirinto, caminho):
-    lab_copy = [linha[:] for linha in labirinto]
-    for x, y in caminho:
-        if lab_copy[x][y] not in ('S', 'E'):
-            lab_copy[x][y] = '*'
-    for linha in lab_copy:
-        print(' '.join(linha))
-
-labirinto = [
-    ['S', '0', '1', '0', '0'],
-    ['0', '0', '1', '0', '1'],
-    ['1', '0', '1', '0', '0'],
-    ['1', '0', '0', 'E', '1']
-]
-
-inicio, fim = encontrar_pontos(labirinto)
-if inicio is None or fim is None:
-    print("Labirinto inválido: ponto S ou E não encontrado.")
-else:
-    caminho = a_star(labirinto, inicio, fim)
-    if caminho:
-        print("Menor caminho (coordenadas):")
-        print(caminho)
-        print("\nLabirinto com o caminho:")
-        imprimir_labirinto_com_caminho(labirinto, caminho)
-    else:
-        print("Sem solução possível.")
-```
+- ✅ Algoritmo A* funcional  
+- ✅ Heurística de Manhattan  
+- ✅ Suporte a movimentos diagonais (opcional)  
+- ✅ Marcação visual do caminho encontrado  
+- ✅ Validação de entrada (exatamente 1 'S' e 1 'E')  
+- ✅ Tratamento de erros  
+- ✅ Código modularizado e comentado  
 
 ---
 
-## Exemplo de Entrada e Saída
+## 🧪 Exemplo de Execução
 
-### Entrada
+### Entrada:
 
 ```python
 labirinto = [
@@ -144,7 +80,7 @@ labirinto = [
 ]
 ```
 
-### Saída
+### Saída:
 
 ```
 Menor caminho (coordenadas):
@@ -159,30 +95,45 @@ S 0 1 0 0
 
 ---
 
-## Relatório Técnico
+## 📂 Estrutura
 
-### Complexidade Assintótica
-
-- **Tempo (melhor caso):** O(n), onde n é o número de células livres próximas do ponto inicial.
-- **Tempo (pior caso):** O(n log n), considerando uso de fila de prioridade (heap).
-- **Espaço:** O(n), para armazenar os custos, o caminho e o heap.
-
-### Complexidade Ciclomática
-
-- Nós (N): 8  
-- Arestas (E): 10  
-- Componentes Conexos (P): 1  
-- Fórmula: M = E - N + 2P = 10 - 8 + 2(1) = **4**
-
-A função principal (`a_star`) tem uma complexidade ciclomática de 4, representando 4 caminhos independentes possíveis.
+- `main.py`: Arquivo principal com toda a lógica
+- `README.md`: Documentação do projeto
+- (opcional) `labirintos/`: Pasta para entrada por arquivos
 
 ---
 
-## Conclusão
+## 🧠 Complexidade
 
-O projeto **PathFinder** resolve com sucesso o problema de navegação em um labirinto 2D, utilizando o algoritmo A*. Ele encontra o menor caminho entre dois pontos, evitando obstáculos de maneira eficiente. A implementação é simples, clara e pode ser expandida facilmente com recursos como:
+### Complexidade Assintótica
 
-- Movimentos diagonais
-- Terrenos com custos diferentes
-- Interface gráfica (GUI)
-- Geração automática de labirintos
+- **Melhor caso:** O(n), onde n = número de células livres
+- **Pior caso:** O(n log n), devido à fila de prioridade (heap)
+
+### Complexidade Ciclomática
+
+- **Cálculo:** `M = E - N + 2P = 10 - 8 + 2(1) = 4`  
+  A função `a_star()` apresenta **4 caminhos independentes**, indicando lógica bem estruturada e controle de fluxo claro.
+
+---
+
+## ✨ Possíveis Expansões
+
+- Movimentos diagonais com ativação dinâmica ✅
+- Terrenos com pesos variados ⏳
+- Geração automática de labirintos ⏳
+- Interface gráfica com PyGame ou Tkinter ⏳
+- Entrada de labirinto via arquivo `.txt` ⏳
+- Exportação do caminho em JSON ⏳
+
+---
+
+## 📌 Conclusão
+
+O projeto **PathFinder** cumpre seu propósito de forma clara, eficiente e com foco em qualidade de código. É ideal para aprendizado e também serve como base para sistemas mais complexos de navegação e IA.
+
+---
+
+## 👨‍💻 Autor
+
+Gabriel Afonso Infante Vieira — Estudante de Engenharia de Software

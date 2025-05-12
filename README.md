@@ -1,9 +1,3 @@
-Okay, entendi. Você quer que o README.md do projeto PathFinder (A*) siga o modelo e a estrutura do README.md do projeto KaratsubaMultiply que você forneceu como exemplo, incluindo seções como "Relatório Técnico" com complexidade assintótica e ciclomática.
-
-Aqui está uma versão revisada do README.md para o seu projeto A*, adaptada para seguir mais de perto o modelo do KaratsubaMultiply, incluindo as seções solicitadas:
-
-Markdown
-
 # PathFinder - Resolvendo o Labirinto 2D com o Algoritmo A*
 
 ## Descrição do Projeto

@@ -6,7 +6,6 @@ O projeto **PathFinder** implementa o algoritmo de busca A* em Python para encon
 
 Este projeto também oferece funcionalidades adicionais como a geração aleatória de labirintos com diferentes níveis de dificuldade e a possibilidade de considerar movimentos diagonais com um custo diferenciado.
 
-
 ---
 
 ## Sobre o Problema do Labirinto 2D e o Algoritmo A*
@@ -32,7 +31,6 @@ Neste projeto, utilizamos a distância de Manhattan como função heurística. P
 $$h(n) = |x_1 - x_2| + |y_1 - y_2|$$
 
 Essa heurística é admissível (nunca superestima o custo real) em labirintos com movimentos apenas horizontais e verticais, garantindo que o A* encontre o caminho mais curto.
-
 
 ---
 
@@ -60,14 +58,13 @@ Essa heurística é admissível (nunca superestima o custo real) em labirintos c
     -   O labirinto com o caminho destacado por '*'.
     -   Uma mensagem indicando se uma solução foi encontrada ou não.
 
-
 ---
 
 ## Explicação do Código (Linha a Linha)
 
 Arquivo: **pathfinder.py**
 
-\`\`\`python
+```python
 import heapq
 import math
 import random
@@ -75,10 +72,10 @@ import random
 # -------------------------- Funções Utilitárias --------------------------
 
 def encontrar_pontos(labirinto):
-    \"\"\"
+    """
     Encontra as coordenadas do ponto de início ('S') e fim ('E') no labirinto.
     Valida se há exatamente um 'S' e um 'E'.
-    \"\"\"
+    """
     inicio = fim = None
     for i, linha in enumerate(labirinto):
         for j, valor in enumerate(linha):
@@ -98,19 +95,19 @@ def encontrar_pontos(labirinto):
 # Ela também realiza uma validação para garantir que exista exatamente um de cada.
 
 def heuristica(a, b):
-    \"\"\"
+    """
     Distância de Manhattan entre dois pontos (a, b).
-    \"\"\"
+    """
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 # Implementa a função heurística da distância de Manhattan, calculando a soma das diferenças absolutas
 # das coordenadas x e y entre dois pontos.
 
 def custo_celula(valor):
-    \"\"\"
+    """
     Define o custo para andar sobre determinada célula.
     Pode ser expandido para terrenos com diferentes pesos.
-    \"\"\"
+    """
     if valor in ('0', 'S', 'E'):
         return 1    # Caminho livre ou início/fim
     elif valor == '2':
@@ -124,9 +121,9 @@ def custo_celula(valor):
 # Células com outros valores (como '1' representando obstáculos) têm custo infinito, tornando-as inacessíveis.
 
 def gerar_labirinto(linhas, colunas, probabilidade_obstaculo=0.3):
-    \"\"\"
+    """
     Gera um labirinto 2D aleatório.
-    \"\"\"
+    """
     labirinto = [['0' for _ in range(colunas)] for _ in range(linhas)]
 
     # Coloca obstáculos aleatoriamente
@@ -156,10 +153,10 @@ def gerar_labirinto(linhas, colunas, probabilidade_obstaculo=0.3):
 # -------------------------- Algoritmo A* --------------------------
 
 def a_star(labirinto, inicio, fim, permitir_diagonais=False):
-    \"\"\"
+    """
     Algoritmo A* para encontrar o menor caminho de 'inicio' até 'fim'.
     Permite diagonais opcionalmente.
-    \"\"\"
+    """
     movimentos = [(-1,0), (1,0), (0,-1), (0,1)]
     if permitir_diagonais:
         movimentos += [(-1,-1), (-1,1), (1,-1), (1,1)]
@@ -215,9 +212,9 @@ def a_star(labirinto, inicio, fim, permitir_diagonais=False):
 # -------------------------- Impressão --------------------------
 
 def imprimir_labirinto_com_caminho(labirinto, caminho):
-    \"\"\"
+    """
     Mostra o labirinto com o caminho marcado por '*'.
-    \"\"\"
+    """
     lab_copy = [linha[:] for linha in labirinto]
     for x, y in caminho[1:-1]:  # Ignora S e E
         lab_copy[x][y] = '*'
@@ -237,7 +234,7 @@ def main():
 
         labirinto = gerar_labirinto(linhas, colunas, probabilidade)
 
-        print("\\nLabirinto gerado:")
+        print("\nLabirinto gerado:")
         for linha in labirinto:
             print(' '.join(linha))
 
@@ -245,12 +242,12 @@ def main():
         caminho = a_star(labirinto, inicio, fim, permitir_diagonais=True)
 
         if caminho:
-            print("\\nCaminho encontrado (coordenadas):")
+            print("\nCaminho encontrado (coordenadas):")
             print(caminho)
-            print("\\nLabirinto com caminho:")
+            print("\nLabirinto com caminho:")
             imprimir_labirinto_com_caminho(labirinto, caminho)
         else:
-            print("\\nSem solução possível para este labirinto.")
+            print("\nSem solução possível para este labirinto.")
     except ValueError as e:
         print(f"Erro: {e}")
     except Exception as e:
@@ -266,24 +263,15 @@ if __name__ == "__main__":
     main()
 
 # Bloco que garante que a função 'main()' seja executada apenas quando o script é rodado diretamente.
-\`\`\`
 
+Exemplos de Entrada e Saída
+Exemplo de Entrada:
 
----
-
-## Exemplos de Entrada e Saída
-
-**Exemplo de Entrada:**
-
-\`\`\`
 Digite o número de linhas do labirinto: 5
 Digite o número de colunas do labirinto: 5
 Digite a probabilidade de haver um obstáculo (entre 0 e 1): 0.2
-\`\`\`
+Exemplo de Saída (o labirinto e o caminho podem variar devido à geração aleatória):
 
-**Exemplo de Saída (o labirinto e o caminho podem variar devido à geração aleatória):**
-
-\`\`\`
 Labirinto gerado:
 S 0 0 1 0
 0 1 0 0 0
@@ -300,13 +288,10 @@ S * * 1 0
 0 0 1 * 1
 0 1 0 E 0
 0 0 0 1 0
-\`\`\`
-
-**Exemplo de Saída (sem solução):**
+Exemplo de Saída (sem solução):
 
 Se o labirinto gerado não tiver um caminho possível entre 'S' e 'E', a saída será:
 
-\`\`\`
 Labirinto gerado:
 S 1 0 1 0
 0 1 0 1 0
@@ -315,11 +300,6 @@ S 1 0 1 0
 0 1 0 1 0
 
 Sem solução possível para este labirinto.
-\`\`\`
+Conclusão
+O projeto PathFinder demonstra uma implementação eficaz do algoritmo A* para a resolução do problema de encontrar o menor caminho em um labirinto 2D. Ao combinar o custo real do caminho percorrido com uma estimativa heurística da distância até o objetivo, o algoritmo A* explora o espaço de busca de forma inteligente, encontrando soluções ótimas de maneira eficiente. A flexibilidade de gerar labirintos aleatórios e a inclusão da opção de movimentos diagonais tornam este projeto uma ferramenta útil para entender e aplicar o algoritmo A* em diferentes cenários de busca de caminhos.
 
-```markdown
----
-
-## Conclusão
-
-O projeto **PathFinder** demonstra uma implementação eficaz do algoritmo A* para a resolução do problema de encontrar o menor caminho em um labirinto 2D. Ao combinar o custo real do caminho percorrido com uma estimativa heurística da distância até o objetivo, o algoritmo A* explora o espaço de busca de forma inteligente, encontrando soluções ótimas de maneira eficiente. A flexibilidade de gerar labirintos aleatórios e a inclusão da opção de movimentos diagonais tornam este projeto uma ferramenta útil para entender e aplicar o algoritmo A* em diferentes cenários de busca de caminhos.
